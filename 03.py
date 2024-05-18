@@ -1,39 +1,19 @@
+"""
+A thread pool is a collection of threads that are created in advance and can be reused to execute multiple tasks. 
+The concurrent.futures module in Python provides a ThreadPoolExecutor class that makes it easy to create and manage a thread pool. 
+"""
+# Simple example
 
-#This example demonstrate shared data space by different processes(problem)
+import concurrent.futures
 
-import multiprocessing 
+def worker():
+	print("Worker thread running")
 
-# empty list with global scope 
-result = [] 
+pool = concurrent.futures.ThreadPoolExecutor(max_workers=2)
 
-def square_list(mylist): 
-	""" 
-	function to square a given list 
-	"""
-	global result 
-	# append squares of mylist to global list result 
-	for num in mylist: 
-		result.append(num * num) 
-	# print global list result 
-	print("Result(in process p1): {}".format(result)) 
+pool.submit(worker) 
+pool.submit(worker)
 
-if __name__ == "__main__": 
-	# input list 
-	mylist = [1,2,3,4] 
+pool.shutdown(wait=True)
 
-	# creating new process 
-	p1 = multiprocessing.Process(target=square_list, args=(mylist,)) 
-	# starting process 
-	p1.start() 
-	# wait until process is finished 
-	p1.join() 
-
-	# print global result list 
-	print("Result(in main program): {}".format(result)) 
-
-	"""
-	In above example, we try to print contents of global list result at two places:
-	-In square_list function. Since, this function is called by process p1, result list is changed in memory space of process p1 only.
-	-After the completion of process p1 in main program. Since main program is run by a different process, its memory space still contains the empty result list.
-	"""
-
+print("Main thread continuing to run")

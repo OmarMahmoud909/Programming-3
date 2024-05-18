@@ -1,47 +1,44 @@
-#This example demonstrate communications between processes
-"""
-Effective use of multiple processes usually requires some communication between 
-them, so that work can be divided and results can be aggregated.
-multiprocessing supports two types of communication channel between processes:
--Queue
--Pipe
-"""
-# Queue Example
 
-import multiprocessing 
+#Race Condition Problem
 
-def square_list(mylist, q): 
+import threading 
+
+# global variable x 
+x = 0
+
+def increment(): 
 	""" 
-	function to square a given list 
+	function to increment global variable x 
 	"""
-	# append squares of mylist to queue 
-	for num in mylist: 
-		q.put(num * num) 
+	global x 
+	x += 1
 
-def print_queue(q): 
+def thread_task(): 
 	""" 
-	function to print queue elements 
+	task for thread 
+	calls increment function 1000 times. 
 	"""
-	print("Queue elements:") 
-	while not q.empty(): 
-		print(q.get()) 
-	print("Queue is now empty!") 
+	for _ in range(100000): 
+		increment() 
+
+def main_task(): 
+	global x 
+	# setting global variable x as 0 
+	x = 0
+
+	# creating threads 
+	t1 = threading.Thread(target=thread_task) 
+	t2 = threading.Thread(target=thread_task) 
+
+	# start threads 
+	t1.start() 
+	t2.start() 
+
+	# wait until threads finish their job 
+	t1.join() 
+	t2.join() 
 
 if __name__ == "__main__": 
-	# input list 
-	mylist = [1,2,3,4] 
-
-	# creating multiprocessing Queue 
-	q = multiprocessing.Queue() 
-
-	# creating new processes 
-	p1 = multiprocessing.Process(target=square_list, args=(mylist, q)) 
-	p2 = multiprocessing.Process(target=print_queue, args=(q,)) 
-
-	# running process p1 to square list 
-	p1.start() 
-	p1.join() 
-
-	# running process p2 to get queue elements 
-	p2.start() 
-	p2.join() 
+	for i in range(10): 
+		main_task() 
+		print("Iteration {0}: x = {1}".format(i,x)) 

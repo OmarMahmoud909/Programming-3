@@ -1,31 +1,33 @@
+
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Feb 27 10:14:46 2024
+
+@author: Ahmed Elsheikh
+"""
+#This is sequential program
+
 import time
-import multiprocessing
 
 def calc_square(numbers):
+    print("calculate square numbers \n")
     for n in numbers:
-        print('square ' + str(n*n))
-        time.sleep(3)
+        print('square:',n*n , '\n')
+        time.sleep(0.2) #simulate an I/O-bound task
 
 def calc_cube(numbers):
+    print("calculate cube of numbers \n")
     for n in numbers:
-        print('cube ' + str(n*n*n))
-        time.sleep(3)
+        print('cube:',n*n*n , '\n')
+        time.sleep(0.2) #simulate an I/O-bound task
+
+arr = [2,3,8,9]
+
+t = time.time()
+
+calc_square(arr)
+calc_cube(arr)
 
 
-if __name__ == "__main__":
-    arr = [2,3,8]
-    
-    t = time.time()
-    p1 = multiprocessing.Process(target=calc_square, args=(arr,))
-    p2 = multiprocessing.Process(target=calc_cube, args=(arr,))
-
-    p1.start()
-    p2.start()
-
-    p1.join()
-    p2.join()
-  
-     
-    print("done in : ",time.time()-t)
-
-    print("The number of CPU currently working in system : ", multiprocessing.cpu_count()) 
+print("done in : ",time.time()-t)
+print("Hah... I am done with all my work now!")
