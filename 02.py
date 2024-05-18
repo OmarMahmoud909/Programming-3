@@ -1,38 +1,39 @@
-# importing the multiprocessing module 
-import multiprocessing 
-import os 
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Feb 27 10:14:46 2024
 
-def worker1(): 
-	# printing process id 
-	print("ID of process running worker1: {}".format(os.getpid())) 
+@author: Ahmed Elsheikh
+"""
+#This is multithreaded program uses I/O bound tasks to speed up the program
+#Study the effect of join function
 
-def worker2(): 
-	# printing process id 
-	print("ID of process running worker2: {}".format(os.getpid())) 
+import time
+import threading
 
-if __name__ == "__main__": 
-	# printing main program process id 
-	print("ID of main process: {}".format(os.getpid())) 
+def calc_square(numbers):
+    print("calculate square numbers \n")
+    for n in numbers:
+        print('square:',n*n , '\n')
+        time.sleep(0.2) #simulate an I/O-bound task
 
-	# creating processes 
-	p1 = multiprocessing.Process(target=worker1) 
-	p2 = multiprocessing.Process(target=worker2) 
+def calc_cube(numbers):
+    print("calculate cube of numbers \n")
+    for n in numbers:
+        print('cube:',n*n*n , '\n')
+        time.sleep(0.2) #simulate an I/O-bound task
 
-	# starting processes 
-	p1.start() 
-	p2.start() 
+arr = [2,3,8,9]
 
-	# process IDs 
-	print("ID of process p1: {}".format(p1.pid)) 
-	print("ID of process p2: {}".format(p2.pid)) 
+t = time.time()
 
-	# wait until processes are finished 
-	p1.join() 
-	p2.join() 
+t1= threading.Thread(target=calc_square, args=(arr,))
+t2= threading.Thread(target=calc_cube, args=(arr,))
 
-	# both processes finished 
-	print("Both processes finished execution!") 
+t1.start()
+t2.start()
 
-	# check if processes are alive 
-	print("Process p1 is alive: {}".format(p1.is_alive())) 
-	print("Process p2 is alive: {}".format(p2.is_alive())) 
+t1.join()
+t2.join()
+
+print("done in : ",time.time()-t)
+print("Hah... I am done with all my work now!")
